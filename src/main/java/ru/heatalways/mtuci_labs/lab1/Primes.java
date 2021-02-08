@@ -3,7 +3,7 @@ package ru.heatalways.mtuci_labs.lab1;
 public class Primes {
     public static void main(String[] args) {
         for (int number = 2; number <= 100; number++) {
-            if (isPrime(number)) System.out.println(number);
+            if (isPrime(number)) System.out.print(number + " ");
         }
     }
 
