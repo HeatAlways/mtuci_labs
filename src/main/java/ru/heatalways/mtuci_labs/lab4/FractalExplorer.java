@@ -67,6 +67,11 @@ public class FractalExplorer extends JFrame {
      */
     private final Rectangle2D.Double range = new Rectangle2D.Double();
 
+    /**
+     * Поле, хранящее в себе кол-во строк, которое необходимо перерисовать
+     */
+    private int rowsRemaining;
+
 
     /**
      * Конструктор по умолчанию, который устанавливает значение размера окна как 800x800 пикселей
@@ -101,13 +106,15 @@ public class FractalExplorer extends JFrame {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                fractalGenerator.recenterAndZoomRange(
-                        range,
-                        getFractalX(e.getX()),
-                        getFractalY(e.getY()),
-                        SCALE_FACTOR
-                );
-                drawFractal();
+                if (rowsRemaining == 0) {
+                    fractalGenerator.recenterAndZoomRange(
+                            range,
+                            getFractalX(e.getX()),
+                            getFractalY(e.getY()),
+                            SCALE_FACTOR
+                    );
+                    drawFractal();
+                }
             }
         });
 
@@ -201,23 +208,10 @@ public class FractalExplorer extends JFrame {
      * Метод, рисующий фракталы в окне
      */
     public void drawFractal() {
+        rowsRemaining = windowSize;
         for (int y = 0; y < windowSize; y++) {
-            for (int x = 0; x < windowSize; x++) {
-                double xCoord = getFractalX(x);
-                double yCoord = getFractalY(y);
-
-                int iterationsCount = fractalGenerator.numIterations(xCoord, yCoord);
-                int rgbColor = JImageDisplay.BLACK_COLOR;
-
-                if (iterationsCount > -1) {
-                    float hue = 0.7f + (float) iterationsCount / 200f;
-                    rgbColor = Color.HSBtoRGB(hue, 1f, 1f);
-                }
-
-                imageDisplay.drawPixel(x, y, rgbColor);
-            }
+            new FractalWorker(y).execute();
         }
-        imageDisplay.repaint();
     }
 
     private double getFractalX(int x) {
@@ -243,9 +237,56 @@ public class FractalExplorer extends JFrame {
         return new File(file.getParent(), file.getName()+ '.' + SAVE_FILE_EXTENSION);
     }
 
+    /**
+     * Метод, позволяющий отключить пользовательский интерфейс во время загрузки изображения
+     * @param isEnabled true - включить интерфейс, false - выключить интерфейс
+     */
+    private void setUIEnabled(boolean isEnabled) {
+        for (Component component : getContentPane().getComponents()) {
+            component.setEnabled(isEnabled);
+        }
+    }
+
     public static void main(String[] args) {
         FractalExplorer fractalExplorer = new FractalExplorer();
         fractalExplorer.createAndShowGUI();
         fractalExplorer.drawFractal();
+    }
+
+    private class FractalWorker extends SwingWorker<Object, Object> {
+        private final int rowIndex;
+        private int[] rowRgbs;
+
+        public FractalWorker(int rowIndex) {
+            this.rowIndex = rowIndex;
+        }
+
+        @Override
+        protected Object doInBackground() {
+            rowRgbs = new int[windowSize];
+            double yCoord = getFractalY(rowIndex);
+
+            for (int x = 0; x < windowSize; x++) {
+                double xCoord = getFractalX(x);
+
+                int iterationsCount = fractalGenerator.numIterations(xCoord, yCoord);
+                int rgbColor = JImageDisplay.BLACK_COLOR;
+
+                if (iterationsCount > -1) {
+                    float hue = 0.7f + (float) iterationsCount / 200f;
+                    rgbColor = Color.HSBtoRGB(hue, 1f, 1f);
+                }
+
+                rowRgbs[x] = rgbColor;
+            }
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            imageDisplay.drawRow(rowIndex, rowRgbs);
+            imageDisplay.repaint(0, 0, rowIndex, windowSize, 1);
+            setUIEnabled(--rowsRemaining == 0);
+        }
     }
 }

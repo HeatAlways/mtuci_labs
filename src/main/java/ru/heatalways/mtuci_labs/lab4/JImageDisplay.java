@@ -39,6 +39,10 @@ public class JImageDisplay extends JComponent {
         image.setRGB(x, y, rgbColor);
     }
 
+    public void drawRow(int rowIndex, int[] rowRgbs) {
+        image.setRGB(0, rowIndex, image.getWidth(), 1, rowRgbs, 0, 0);
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
