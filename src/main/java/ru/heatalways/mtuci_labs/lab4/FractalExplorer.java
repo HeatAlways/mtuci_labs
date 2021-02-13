@@ -1,15 +1,37 @@
 package ru.heatalways.mtuci_labs.lab4;
 
+import ru.heatalways.mtuci_labs.lab4.fractals.BurningShip;
+import ru.heatalways.mtuci_labs.lab4.fractals.Mandelbrot;
+import ru.heatalways.mtuci_labs.lab4.fractals.Tricorn;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Класс, позволяющий отображать фрактал в окне
  */
 public class FractalExplorer extends JFrame {
+    /**
+     * Расширение поддерживаемых файлов для сохранения
+     */
+    private static final String SAVE_FILE_EXTENSION = "png";
+
+    /**
+     * Описание поддерживаемых файлов для сохранения
+     */
+    private static final String SAVE_FILE_DESCRIPTION = "PNG Images";
+
+    /**
+     * Заголовок диалогового окна, информирующего об ошибке
+     */
+    private static final String ERROR_DIALOG_TITLE = "Can't save image!";
+
     /**
      * Заголовк окна программы
      */
@@ -38,7 +60,7 @@ public class FractalExplorer extends JFrame {
     /**
      * Базовый класс для генерации фракталов
      */
-    private final FractalGenerator fractalGenerator;
+    private FractalGenerator fractalGenerator;
 
     /**
      * Диапазон комплексной плоскости
@@ -69,7 +91,9 @@ public class FractalExplorer extends JFrame {
      */
     public void createAndShowGUI() {
         // Установка лэйаута
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
 
         // Настройка элементов интерфейса
         setTitle(WINDOW_TITLE);
@@ -87,15 +111,85 @@ public class FractalExplorer extends JFrame {
             }
         });
 
-        JButton button = new JButton("Reset display");
-        button.addActionListener(e -> {
+        // выбор фрактала
+        JLabel fractalSelectionLabel = new JLabel("Fractal: ", SwingConstants.RIGHT);
+
+        JComboBox<FractalGenerator> fractalSelectionComboBox = new JComboBox<>();
+        fractalSelectionComboBox.addItem(new Mandelbrot());
+        fractalSelectionComboBox.addItem(new Tricorn());
+        fractalSelectionComboBox.addItem(new BurningShip());
+        fractalSelectionComboBox.setSelectedIndex(0);
+        fractalSelectionComboBox.addActionListener(e -> {
+            fractalGenerator = (FractalGenerator) fractalSelectionComboBox.getSelectedItem();
+            assert fractalGenerator != null;
+            fractalGenerator.getInitialRange(range);
+            drawFractal();
+        });
+
+        // Кнопка сохранения изображения фрактала
+        JButton buttonSave = new JButton("Save Image");
+        buttonSave.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileFilter(new FileNameExtensionFilter(
+                    SAVE_FILE_DESCRIPTION, SAVE_FILE_EXTENSION
+            ));
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                try {
+                    File selectedFile = getFileAsPNG(fileChooser.getSelectedFile());
+                    ImageIO.write(
+                            imageDisplay.getImage(),
+                            SAVE_FILE_EXTENSION,
+                            selectedFile
+                    );
+                } catch (IOException ioException) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            ioException.getMessage(),
+                            ERROR_DIALOG_TITLE,
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            }
+        });
+
+
+        // Кнопка сброса изображения
+        JButton buttonReset = new JButton("Reset Display");
+        buttonReset.addActionListener(e -> {
             fractalGenerator.getInitialRange(range);
             drawFractal();
         });
 
         // Добавление элементов в лэйаут
-        add(imageDisplay, BorderLayout.CENTER);
-        add(button, BorderLayout.SOUTH);
+        constraints.gridwidth = 1;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.weightx = 0.5;
+        add(fractalSelectionLabel, constraints);
+
+        constraints.gridwidth = 1;
+        constraints.gridx = 1;
+        constraints.gridy = 0;
+        constraints.weightx = 0.5;
+        add(fractalSelectionComboBox, constraints);
+
+        constraints.gridwidth = 3;
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        add(imageDisplay, constraints);
+
+        constraints.gridwidth = 1;
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        constraints.weightx = 0.5;
+        add(buttonSave, constraints);
+
+        constraints.gridwidth = 2;
+        constraints.gridx = 1;
+        constraints.gridy = 2;
+        constraints.weightx = 0.5;
+        add(buttonReset, constraints);
 
         // Отображение элементов
         pack();
@@ -142,6 +236,11 @@ public class FractalExplorer extends JFrame {
                 windowSize,
                 y
         );
+    }
+
+    private File getFileAsPNG(File file) {
+        if (file.getName().toLowerCase().endsWith(SAVE_FILE_EXTENSION)) return file;
+        return new File(file.getParent(), file.getName()+ '.' + SAVE_FILE_EXTENSION);
     }
 
     public static void main(String[] args) {

@@ -101,4 +101,24 @@ public class ComplexNumber {
         double _imaginary = 2*this.real*this.imaginary;
         return new ComplexNumber(_real,_imaginary);
     }
+
+    public ComplexNumber abs() {
+        return new ComplexNumber(Math.abs(real), Math.abs(imaginary));
+    }
+
+    public double getRe() {
+        return real;
+    }
+
+    public void setRe(double real) {
+        this.real = real;
+    }
+
+    public double getIm() {
+        return imaginary;
+    }
+
+    public void setIm(double imaginary) {
+        this.imaginary = imaginary;
+    }
 }

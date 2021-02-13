@@ -14,6 +14,10 @@ public class JImageDisplay extends JComponent {
         setPreferredSize(new Dimension(width, height));
     }
 
+    public BufferedImage getImage() {
+        return image;
+    }
+
     /**
      * Метод, очищающий окно (в чёрный цвет)
      */

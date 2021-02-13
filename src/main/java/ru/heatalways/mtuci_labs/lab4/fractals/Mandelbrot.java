@@ -1,4 +1,7 @@
-package ru.heatalways.mtuci_labs.lab4;
+package ru.heatalways.mtuci_labs.lab4.fractals;
+
+import ru.heatalways.mtuci_labs.lab4.ComplexNumber;
+import ru.heatalways.mtuci_labs.lab4.FractalGenerator;
 
 import java.awt.geom.Rectangle2D;
 
@@ -40,5 +43,10 @@ public class Mandelbrot extends FractalGenerator {
         }
 
         return iteration;
+    }
+
+    @Override
+    public String toString() {
+        return "Mandelbrot";
     }
 }
