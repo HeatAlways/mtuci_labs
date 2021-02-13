@@ -253,14 +253,33 @@ public class FractalExplorer extends JFrame {
         fractalExplorer.drawFractal();
     }
 
+    /**
+     * Класс, предназначенный для вычисления цветов пикселей строки фрактала
+     */
     private class FractalWorker extends SwingWorker<Object, Object> {
+        /**
+         * Индекс строки, которую следует перерисовать
+         */
         private final int rowIndex;
+
+        /**
+         * Строка, хранящая в себе значения цветов пикслей конкретной строки
+         */
         private int[] rowRgbs;
 
+        /**
+         * Конструктор, принимающий на вход индекс строки, которую следует перерисовать
+         * @param rowIndex индекс строки, которую следует перерисовать
+         */
         public FractalWorker(int rowIndex) {
             this.rowIndex = rowIndex;
         }
 
+        /**
+         * Метод, выполняющийся в другом потоке. Предназначен для вычисления
+         * цветов пикселей фрактала конкретной строки
+         * @return
+         */
         @Override
         protected Object doInBackground() {
             rowRgbs = new int[windowSize];
@@ -282,6 +301,9 @@ public class FractalExplorer extends JFrame {
             return null;
         }
 
+        /**
+         * Метод, вызывающийся при окончании вычислений
+         */
         @Override
         protected void done() {
             imageDisplay.drawRow(rowIndex, rowRgbs);

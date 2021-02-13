@@ -39,6 +39,11 @@ public class JImageDisplay extends JComponent {
         image.setRGB(x, y, rgbColor);
     }
 
+    /**
+     * Метод, рисующий целую строку
+     * @param rowIndex индекс строки, которую необходимо перерисовать
+     * @param rowRgbs массив цветов RGB для каждого пикселя
+     */
     public void drawRow(int rowIndex, int[] rowRgbs) {
         image.setRGB(0, rowIndex, image.getWidth(), 1, rowRgbs, 0, 0);
     }
