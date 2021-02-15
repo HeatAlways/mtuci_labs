@@ -4,33 +4,14 @@ package ru.heatalways.mtuci_labs.lab2;
  * Класс, представляющий собос некую обёртку трёхмерных координат (x, y, z).
  * По умолчанию конструктор инициализирует данные три переменные значением 0.
  */
-public class Point3D {
-    private double x;
-    private double y;
+public class Point3D extends Point2D {
     private double z;
 
     public Point3D() { this(0, 0, 0); }
 
     public Point3D(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
+        super(x, y);
         this.z = z;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
     }
 
     public double getZ() {
@@ -48,9 +29,9 @@ public class Point3D {
      */
     public double distanceTo(Point3D point) {
         return Math.round(Math.sqrt(
-                    Math.pow(point.x - x, 2) +
-                    Math.pow(point.y - y, 2) +
-                    Math.pow(point.z - z, 2)
+                    Math.pow(point.getX() - getX(), 2) +
+                    Math.pow(point.getY() - getY(), 2) +
+                    Math.pow(point.getZ() - getZ(), 2)
         ) * 100d) / 100d;
     }
 
@@ -59,8 +40,8 @@ public class Point3D {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Point3D point3D = (Point3D) o;
-        return  Double.compare(point3D.x, x) == 0 &&
-                Double.compare(point3D.y, y) == 0 &&
-                Double.compare(point3D.z, z) == 0;
+        return  Double.compare(point3D.getX(), getX()) == 0 &&
+                Double.compare(point3D.getY(), getY()) == 0 &&
+                Double.compare(point3D.getZ(), getZ()) == 0;
     }
 }

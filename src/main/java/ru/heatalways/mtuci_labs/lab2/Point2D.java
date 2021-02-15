@@ -2,10 +2,10 @@ package ru.heatalways.mtuci_labs.lab2;
 
 public class Point2D {
     /** координата X **/
-    private double xCoord;
+    protected double xCoord;
 
     /** координата Y **/
-    private double yCoord;
+    protected double yCoord;
 
     /** Конструктор инициализации **/
     public Point2D( double x, double y) {
