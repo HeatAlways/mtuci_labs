@@ -2,6 +2,7 @@ package ru.heatalways.mtuci_labs.lab7;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Lab7 {
     public static void main(String[] args) {
@@ -30,7 +31,10 @@ public class Lab7 {
 
         UrlCrawler urlCrawler = new UrlCrawler(startUrl, maxDepth);
         urlCrawler.startScanning();
-        System.out.println(urlCrawler.getUrls());
+        System.out.println(urlCrawler.getUrls().stream()
+                .map(it -> "Depth: " + it.getDepth() + "; URL: " + it.getUrl())
+                .collect(Collectors.joining("\n"))
+        );
     }
 
     private static void throwIllegalArgumentException() {
