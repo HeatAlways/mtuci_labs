@@ -90,7 +90,7 @@ public class UrlCrawler {
     private List<UrlDepthPair> getPairsFromUrl(String url, int depth) {
         List<UrlDepthPair> newPairs = new LinkedList<>();
         try {
-            new HtmlReader(url).getLines().forEach(line -> {
+            HtmlReader.readLinesFrom(url).forEach(line -> {
                 getUrlsFromLine(line).forEach(urlFromLine -> {
                     try {
                         UrlDepthPair newPair = new UrlDepthPair(urlFromLine, depth);
