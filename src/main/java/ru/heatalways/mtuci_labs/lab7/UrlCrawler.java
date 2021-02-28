@@ -15,7 +15,7 @@ public class UrlCrawler {
     /**
      * Шаблон (регулярное выражение) допустимых URL-адресов
      */
-    public static final String URL_REGEX = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&amp;@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&amp;@#/%=~_()|]";
+    public static final String URL_REGEX = "http://[-A-Za-z0-9+&amp;@#/%?=~_()|!:,.]*[-A-Za-z0-9+&amp;@#/%=~_()|]";
 
     /**
      * Посещённые и корректные URL адреса (URL-глубина)
