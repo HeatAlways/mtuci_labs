@@ -64,7 +64,7 @@ public class Lab7 {
     private static void throwIllegalArgumentException() {
         throw new IllegalArgumentException(
                 "Некорректные входные данные! " +
-                        "Использование: Crawler(<URL>, <положительное целое число>)"
+                        "Использование: Crawler(<URL>, <положительное целое число>, <кол-во потоков>)"
         );
     }
 
